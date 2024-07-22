@@ -1,0 +1,17 @@
+body {
+  padding: 50px 80px;
+  font: 14px 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
+}
+
+a {
+  color: #107aff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-weight: lighter;
+}
