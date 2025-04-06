@@ -1,16 +1,13 @@
-import * as bodyParser from 'body-parser'
-import express from 'express'
 import path from 'node:path'
+import express, { Request, Response, NextFunction } from 'express'
+import bodyParser from 'body-parser'
 import createError from 'http-errors'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import helmet from 'helmet'
-import compression from 'compression'
-import morgan from 'morgan'
 
-import routes from './routes'
+import { CognitoService } from './AppService'
 
-export default class App {
+const cognitoService = new CognitoService()
+
+class App {
   public app: express.Application
   public port: number
 
@@ -19,62 +16,67 @@ export default class App {
     this.port = appInit.port
 
     this.init()
-    this.engine()
-    this.assets()
-
-    // this.middlewares()
-    this.routes()
+    this.Routes()
     this.ErrorHandler()
   }
 
   private init() {
-    this.app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }))
-    this.app.use(compression())
-
     this.app
+      .disable('x-powered-by')
       .use(bodyParser.urlencoded({ extended: true }))
       .use(bodyParser.json())
-      .use(cors())
-      .use(morgan('dev'))
-    this.app.use(cookieParser())
-    this.app.use(express.text())
-    this.app.disable('x-powered-by')
+      .use(express.static(path.join(__dirname, '../public')))
   }
 
-  private engine() {
-    this.app.set('views', path.join(__dirname, 'views'))
-    this.app.set('view engine', 'twig')
-  }
+  private Routes() {
+    this.app
 
-  private assets() {
-    this.app.use(express.static(path.join(__dirname, '../public')))
-  }
+      .get('/', (req, res) => {
+        return res.sendFile(path.resolve(__dirname, '../public', 'index.html'))
+      })
 
-  // private middlewares() {
-  //   this.app.use()
-  // }
+      .get('/health', async (req: Request, res: Response) => {
+        try {
+          const result = await cognitoService.CheckHealth()
+          res.status(201).json(result)
+        } catch (error) {
+          res.status(500).json({ message: error instanceof Error ? error.message : String(error) })
+        }
+      })
 
-  private routes() {
-    this.app.use(routes)
+      .post('/message', async (req: Request, res: Response) => {
+        const { name } = req.body
+
+        if (!name) {
+          return res.status(400).json({ message: 'Username e password são obrigatórios.' })
+        }
+
+        try {
+          const result = await cognitoService.Message(name)
+          res.status(201).json(result)
+        } catch (error) {
+          res.status(500).json({ message: error.message })
+        }
+      })
   }
 
   private ErrorHandler() {
-    // catch 404 and forward to error handler
     this.app
-
-      .use(function (req, res, next) {
+      .use(function (req: Request, res: Response, next: NextFunction) {
         next(createError(404))
       })
 
-      // error handler
-      .use(function (err: any, req: any, res: any, next: any) {
-        // set locals, only providing error in development
+      .use(function (err: any, req: Request, res: Response, next: NextFunction) {
         res.locals.message = err.message
         res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-        // render the error page
         res.status(err.status || 500)
-        res.render('error')
+        res.json({
+          status: err.status,
+          message: err.message
+        })
       })
   }
 }
+
+export default App

@@ -39,8 +39,8 @@
   "computeResources": [
     {
       "name": "default",
-      "runtime": "nodejs18.x",
-      "entrypoint": "index.js"
+      "runtime": "nodejs20.x",
+      "entrypoint": "index.cjs"
     }
   ]
 }
