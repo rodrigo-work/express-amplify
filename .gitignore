@@ -8,15 +8,10 @@ node_modules
 # Testing
 /coverage
 
-# Next.js
-.next
-out
-
 # Production
 build
 dist
 .amplify-hosting
-
 
 # Misc
 .DS_Store
@@ -29,13 +24,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local ENV files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
 
-# Vercel
-.vercel
-
-# Turborepo
-.turbo
