@@ -1,0 +1,33 @@
+{
+  "folders": [
+    {
+      "name": "express-amplify",
+      "path": "../"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSaveMode": "file",
+    "prettier.arrowParens": "always",
+    "prettier.useTabs": false,
+    "prettier.endOfLine": "lf",
+    "prettier.trailingComma": "none",
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 120,
+    "prettier.tabWidth": 2,
+    "prettier.bracketSpacing": true,
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto"
+      }
+    ],
+    "files.exclude": {
+      "*": false
+    }
+  }
+}
